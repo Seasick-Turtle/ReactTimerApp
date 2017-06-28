@@ -5,11 +5,11 @@ var Controls = require('Controls');
 
 var Countdown = React.createClass({
   getInitialState: function () {
-      return {
-        count: 0,
-        countdownStatus: 'stopped'
-      };
-    },
+    return {
+      count: 0,
+      countdownStatus: 'stopped'
+    };
+  },
 
   componentDidUpdate: function (prevProps, prevState) {
     if (this.state.countdownStatus !== prevState.countdownStatus) {
@@ -42,7 +42,7 @@ var Countdown = React.createClass({
       });
 
       if (newCount === 0) {
-
+        this.setState({countdownStatus: 'stopped'});
       }
     }, 1000);
   },
