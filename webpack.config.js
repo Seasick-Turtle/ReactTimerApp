@@ -1,7 +1,9 @@
-var webpack = require('webpack');
-var path = require('path');
+const webpack = require('webpack');
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
+  mode: 'development',
   entry: [
     'script!jquery/dist/jquery.min.js',
     'script!foundation-sites/dist/foundation.min.js',
@@ -14,14 +16,17 @@ module.exports = {
     new webpack.ProvidePlugin({
       '$': 'jquery',
       'jQuery': 'jquery'
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css'
     })
   ],
   output: {
-    path: __dirname,
+    path: path.resolve(__dirname),
     filename: './public/bundle.js'
   },
   resolve: {
-    root: __dirname,
     alias: {
       Main: 'app/components/Main.jsx',
       Clock: 'app/components/Clock.jsx',
@@ -32,24 +37,19 @@ module.exports = {
       Timer: 'app/components/Timer.jsx',
       applicationStyles: 'app/styles/app.scss'
     },
-    extensions: ['', '.js', '.jsx']
   },
   module: {
-    loaders: [
+    rules: [
+      {test: /\.(js)$/, use: 'babel-loader'},
       {
-        loader: 'babel-loader',
-        query: {
-          presets: ['react', 'es2015', 'stage-0']
-        },
-        test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/
+        test: /\.scss$/,
+        use: [
+          process.env.NODE_ENV !== 'production' ? 'style-loader' :
+            MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader'
+        ]
       }
-    ]
-  },
-  sassLoader: {
-    includePaths: [
-      path.resolve(__dirname, './node_modules/foundation-sites/scss')
-    ]
-  },
-  devtool: 'cheap-module-eval-source-map'
+    ],
+  }
 };
